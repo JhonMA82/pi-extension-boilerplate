@@ -1,0 +1,44 @@
+{
+  "name": "pi-extension-template",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Bun-first template for practical, consistent Pi extensions.",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "bun"
+  ],
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "scripts": {
+    "init": "bun ./scripts/init.ts",
+    "generate": "bun ./scripts/scaffold.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "check": "bun run typecheck && bun run lint",
+    "pack:check": "bun pm pack --dry-run"
+  },
+  "dependencies": {
+    "@narumitw/pi-tui-kit": "^0.63.1"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "typescript": "^7.0.2"
+  },
+  "packageManager": "bun@1.4.2"
+}
