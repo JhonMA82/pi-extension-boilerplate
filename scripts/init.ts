@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 
@@ -33,6 +33,54 @@ async function run(command: string[], optional = false): Promise<boolean> {
     });
     child.once("exit", (code) => resolvePromise(code === 0));
   });
+}
+
+function git(args: string[]): { ok: boolean; stdout: string } {
+  try {
+    const result = spawnSync("git", args, { cwd: root, encoding: "utf8" });
+    const stdout = typeof result.stdout === "string" ? result.stdout.trim() : "";
+    return { ok: result.status === 0, stdout };
+  } catch {
+    return { ok: false, stdout: "" };
+  }
+}
+
+function inGitRepo(): boolean {
+  return git(["rev-parse", "--is-inside-work-tree"]).ok;
+}
+
+function ensureGitIdentity(): void {
+  if (!inGitRepo()) return;
+  let placeholder = false;
+  if (!git(["config", "user.name"]).stdout) {
+    git(["config", "user.name", "Developer"]);
+    placeholder = true;
+  }
+  if (!git(["config", "user.email"]).stdout) {
+    git(["config", "user.email", "developer@localhost"]);
+    placeholder = true;
+  }
+  if (placeholder) {
+    console.warn(
+      "Git identity is not configured; using a local placeholder (Developer <developer@localhost>).",
+    );
+    console.warn(
+      'Replace it with: git config user.name "Your Name" && git config user.email "you@example.com"',
+    );
+  }
+}
+
+function createInitialCommitIfNeeded(): void {
+  if (!inGitRepo()) return;
+  if (git(["rev-parse", "--verify", "HEAD"]).ok) return;
+  git(["add", "-A"]);
+  if (!git(["status", "--porcelain"]).stdout) return;
+  const commit = git(["commit", "-m", `chore: initialize ${packageName} from boilerplate`]);
+  if (commit.ok) {
+    console.log("Created initial git commit.");
+  } else {
+    console.warn("Could not create the initial git commit; commit manually when ready.");
+  }
 }
 
 const packageName = packageNameFromDirectory(basename(root));
@@ -123,10 +171,12 @@ The project starts with \`private: true\`. Remove it only when you intentionally
 }
 
 console.log(`\nInitialized ${packageName}`);
+
+ensureGitIdentity();
+
 console.log("Running base validation...\n");
 
 const checksOk = await run(["bun", "run", "check"]);
-if (!checksOk) process.exit(1);
 
 const synced = await run(["aicontext", "sync"], true);
 if (synced) {
@@ -137,6 +187,10 @@ if (synced) {
 } else {
   console.log("AIContext sync unavailable or unsuccessful; skipped automatic check.");
 }
+
+createInitialCommitIfNeeded();
+
+if (!checksOk) process.exit(1);
 
 console.log(
   "\nReady. Use `bun run generate -- <command|tool|service|menu> <name>` when scaffolding is useful.",
