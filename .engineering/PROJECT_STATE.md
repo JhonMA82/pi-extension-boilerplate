@@ -1,27 +1,29 @@
 # Project State
 
 <!-- aicontext:generated:start -->
-Project: pi-extension-template
-Template snapshot: pi-extension-boilerplate v0.3.0
-Package manager/tooling runtime: Bun 1.4.2
-Language: TypeScript
-Pi entry point: src/index.ts
+Last synchronized commit: 3ee5136
+Version: 0.3.0 (package.json)
+Package manager: bun (bun.lock)
+Complexity: small
+Source files: 18 | LOC: ~850
+Test functions: 0 (src: 0, tests: 0)
 
 Important paths:
-- Commands: src/commands
-- Tools: src/tools
-- Services: src/services
-- Extension-specific UI composition: src/ui
-- Deterministic scripts: scripts
-- Agent context: .engineering
-- Human documentation: docs
+
+- README.md
+- docs
+- CHANGELOG.md
+- AGENTS.md
 
 Commands:
-- bun run init [-- "optional description"]
-- bun run generate -- <command|tool|service|menu> <name>
-- bun run check
-- bun run pack:check
-- pi -e ./src/index.ts
+
+- check
+- format
+- generate
+- init
+- lint
+- pack:check
+- typecheck
 <!-- aicontext:generated:end -->
 
 <!-- aicontext:curated:start -->

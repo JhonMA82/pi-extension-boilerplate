@@ -74,7 +74,6 @@ async function syncAIContext() {
   });
 }
 
-
 if (kind === "command") {
   await createFile(
     `src/commands/${kebab}.ts`,

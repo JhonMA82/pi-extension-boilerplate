@@ -5,34 +5,17 @@ version:
 
 commands:
   documented:
-    - command: "bun create JhonMA82/pi-extension-boilerplate <destination>"
-      references:
-        - README.md
-        - docs/WORKFLOW.md
-    - command: "bun run init"
-      references:
-        - README.md
-        - docs/WORKFLOW.md
-    - command: "bun run generate -- <command|tool|service|menu> <name>"
-      references:
-        - README.md
-        - docs/WORKFLOW.md
-        - .engineering/PATTERNS.md
-    - command: "bun run check"
-      references:
-        - README.md
-        - docs/WORKFLOW.md
-    - command: "bun run pack:check"
-      references:
-        - README.md
-        - docs/WORKFLOW.md
+    - "check"
+    - "format"
+    - "generate"
+    - "init"
+    - "lint"
+    - "pack:check"
+    - "typecheck"
 
 protected:
-  - path: "scripts/init.ts"
-    policy: explicit-task-only
-  - path: "scripts/scaffold.ts"
-    policy: explicit-task-only
-  - path: ".engineering/aicontext.toml"
-    policy: explicit-task-only
-  - path: ".engineering/consistency.yml"
-    policy: explicit-task-only
+  # policy: explicit-task-only
+  - "scripts/init.ts"
+  - "scripts/scaffold.ts"
+  - ".engineering/aicontext.toml"
+  - ".engineering/consistency.yml"

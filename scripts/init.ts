@@ -35,13 +35,18 @@ async function run(command: string[], optional = false): Promise<boolean> {
   });
 }
 
-
 const packageName = packageNameFromDirectory(basename(root));
 const packagePath = resolve(root, "package.json");
 const aiContextPath = resolve(root, ".engineering/aicontext.toml");
 const projectStatePath = resolve(root, ".engineering/PROJECT_STATE.md");
 
-const pkg = JSON.parse(await readFile(packagePath, "utf8"));
+let pkg: { name?: string; version?: string; description?: string };
+try {
+  pkg = JSON.parse(await readFile(packagePath, "utf8"));
+} catch (error) {
+  console.error(`Cannot read or parse package.json at ${packagePath}`, error);
+  process.exit(1);
+}
 const firstInitialization = pkg.name === "pi-extension-template";
 pkg.name = packageName;
 if (firstInitialization) pkg.version = "0.1.0";
@@ -133,4 +138,6 @@ if (synced) {
   console.log("AIContext sync unavailable or unsuccessful; skipped automatic check.");
 }
 
-console.log("\nReady. Use `bun run generate -- <command|tool|service|menu> <name>` when scaffolding is useful.");
+console.log(
+  "\nReady. Use `bun run generate -- <command|tool|service|menu> <name>` when scaffolding is useful.",
+);
